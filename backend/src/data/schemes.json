@@ -1,0 +1,146 @@
+[
+  {
+    "schemeId": "SCH001",
+    "name": "Demo Learning Opportunity Scheme",
+    "description": "Demo data for education support discovery. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Learning",
+    "department": "Demo Student Support Department",
+    "category": "EDUCATION",
+    "eligibilityCriteria": {
+      "minAge": 16,
+      "maxAge": 30,
+      "maxAnnualIncome": 600000,
+      "studentRequired": true
+    },
+    "benefits": [
+      "Illustrative education support information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF",
+      "ADDRESS_PROOF",
+      "INCOME_PROOF"
+    ],
+    "startDate": "2025-01-01",
+    "endDate": "2027-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://example.com/demo-schemes"
+  },
+  {
+    "schemeId": "SCH002",
+    "name": "Demo Farm Support Scheme",
+    "description": "Demo data for rural agriculture support discovery. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Agriculture",
+    "department": "Demo Farm Support Department",
+    "category": "AGRICULTURE",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "maxAnnualIncome": 800000,
+      "ruralResidentRequired": true
+    },
+    "benefits": [
+      "Illustrative farm support information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF",
+      "ADDRESS_PROOF",
+      "LAND_RECORD"
+    ],
+    "startDate": "2025-04-01",
+    "endDate": "2027-03-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://example.com/demo-schemes"
+  },
+  {
+    "schemeId": "SCH003",
+    "name": "Demo Community Housing Scheme",
+    "description": "Demo data for housing support discovery. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Communities",
+    "department": "Demo Housing Department",
+    "category": "HOUSING",
+    "eligibilityCriteria": {
+      "minAge": 21,
+      "maxAnnualIncome": 500000
+    },
+    "benefits": [
+      "Illustrative housing support information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF",
+      "ADDRESS_PROOF",
+      "INCOME_PROOF"
+    ],
+    "startDate": "2025-01-01",
+    "endDate": "2026-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://example.com/demo-schemes"
+  },
+  {
+    "schemeId": "SCH004",
+    "name": "Demo Rural Skills Scheme",
+    "description": "Demo data for rural skills support discovery. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Rural Development",
+    "department": "Demo Rural Skills Department",
+    "category": "RURAL_SUPPORT",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "maxAge": 45,
+      "ruralResidentRequired": true,
+      "studentRequired": false
+    },
+    "benefits": [
+      "Illustrative rural skills information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF",
+      "ADDRESS_PROOF"
+    ],
+    "startDate": "2024-01-01",
+    "endDate": "2026-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://example.com/demo-schemes"
+  },
+  {
+    "schemeId": "SCH005",
+    "name": "Demo Wellness Access Scheme",
+    "description": "Demo data for health support discovery. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Wellness",
+    "department": "Demo Community Health Department",
+    "category": "HEALTH",
+    "eligibilityCriteria": {
+      "maxAnnualIncome": 300000
+    },
+    "benefits": [
+      "Illustrative health support information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF",
+      "ADDRESS_PROOF",
+      "INCOME_PROOF"
+    ],
+    "startDate": "2025-01-01",
+    "endDate": "2026-06-30",
+    "status": "INACTIVE",
+    "sourceUrl": "https://example.com/demo-schemes"
+  },
+  {
+    "schemeId": "SCH006",
+    "name": "Demo Closed Housing Pilot",
+    "description": "Demo data for a closed pilot. Replace with verified official information before real use.",
+    "ministry": "Demo Ministry of Communities",
+    "department": "Demo Housing Department",
+    "category": "HOUSING",
+    "eligibilityCriteria": {
+      "minAge": 18
+    },
+    "benefits": [
+      "Illustrative closed-pilot information only"
+    ],
+    "requiredDocuments": [
+      "IDENTITY_PROOF"
+    ],
+    "startDate": "2024-01-01",
+    "endDate": "2024-12-31",
+    "status": "CLOSED",
+    "sourceUrl": "https://example.com/demo-schemes"
+  }
+]
