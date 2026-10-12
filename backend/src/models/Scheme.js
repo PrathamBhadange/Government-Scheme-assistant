@@ -19,7 +19,9 @@ const CRITERIA_TYPES = new Set([
   'maxAge',
   'maxAnnualIncome',
   'studentRequired',
-  'ruralResidentRequired'
+  'ruralResidentRequired',
+  'requiredOccupation',
+  'landOwnershipRequired'
 ]);
 
 export class Scheme {
@@ -64,6 +66,8 @@ export class Scheme {
         if (!CRITERIA_TYPES.has(key)) errors.push(`unsupported eligibility criterion: ${key}`);
         else if (['studentRequired', 'ruralResidentRequired'].includes(key) && typeof value !== 'boolean') errors.push(`${key} must be boolean`);
         else if (['minAge', 'maxAge', 'maxAnnualIncome'].includes(key) && (!Number.isFinite(value) || value < 0)) errors.push(`${key} must be a non-negative number`);
+        else if (key === 'landOwnershipRequired' && typeof value !== 'boolean') errors.push('landOwnershipRequired must be boolean');
+        else if (key === 'requiredOccupation' && (!Array.isArray(value) || value.length === 0 || value.some((item) => typeof item !== 'string' || !item.trim()))) errors.push('requiredOccupation must be a non-empty array of strings');
       }
       if (data.eligibilityCriteria.minAge !== undefined && data.eligibilityCriteria.maxAge !== undefined && data.eligibilityCriteria.minAge > data.eligibilityCriteria.maxAge) errors.push('minAge must not exceed maxAge');
     }
@@ -110,6 +114,13 @@ export class Scheme {
     if (criteria.maxAnnualIncome !== undefined) check('annualIncome', 'Income', (value) => Number.isFinite(value) && value <= criteria.maxAnnualIncome, `Annual income must not exceed ${criteria.maxAnnualIncome}.`);
     if (criteria.studentRequired !== undefined) check('isStudent', 'Student status', (value) => value === criteria.studentRequired, `Student status must be ${criteria.studentRequired ? 'true' : 'false'}.`);
     if (criteria.ruralResidentRequired !== undefined) check('isRuralResident', 'Rural residence', (value) => value === criteria.ruralResidentRequired, `Rural residence status must be ${criteria.ruralResidentRequired ? 'true' : 'false'}.`);
+    if (criteria.landOwnershipRequired !== undefined) check('ownsLand', 'Land ownership', (value) => value === criteria.landOwnershipRequired, `Land ownership must be ${criteria.landOwnershipRequired ? 'true' : 'false'}.`);
+    if (criteria.requiredOccupation !== undefined) {
+      check('occupation', 'Occupation', (value) => {
+        const citizenOccupations = String(value).toLowerCase().split(/[/,&]/).map((item) => item.trim()).filter(Boolean);
+        return criteria.requiredOccupation.some((required) => required.toLowerCase() === 'any' || citizenOccupations.some((occupation) => occupation.includes(required.toLowerCase()) || required.toLowerCase().includes(occupation)));
+      }, `Occupation must match one of: ${criteria.requiredOccupation.join(', ')}.`);
+    }
     const eligibilityStatus = failed ? 'NOT_ELIGIBLE' : missingInformation.length ? 'NEEDS_INFORMATION' : 'ELIGIBLE';
     return {
       schemeId: this.schemeId,

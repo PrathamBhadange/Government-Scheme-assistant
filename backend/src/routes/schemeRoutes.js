@@ -2,7 +2,6 @@ import { Router } from 'express';
 import {
   checkEligibility,
   checkSchemeEligibility,
-  getAllSchemes,
   getRequiredDocuments,
   getSchemeById,
   searchSchemes
@@ -11,15 +10,21 @@ import {
 const router = Router();
 const allowedStatuses = new Set(['ACTIVE', 'INACTIVE', 'CLOSED']);
 const positiveInteger = (value) => /^\d+$/.test(value) && Number(value) > 0;
-const citizenFields = new Set(['age', 'annualIncome', 'isStudent', 'isRuralResident']);
+const citizenFields = new Set([
+  'age', 'annualIncome', 'isStudent', 'isRuralResident',
+  'annual_income', 'owns_land', 'ownsLand', 'occupation',
+  'documents', 'available_documents', 'documents_uploaded'
+]);
 
 function validateCitizen(body) {
   if (!body || typeof body !== 'object' || Array.isArray(body)) return ['request body must be a Citizen-like object'];
   const errors = [];
   for (const [key, value] of Object.entries(body)) {
     if (!citizenFields.has(key)) errors.push(`unsupported Citizen field: ${key}`);
-    if (['age', 'annualIncome'].includes(key) && (!Number.isFinite(value) || value < 0)) errors.push(`${key} must be a non-negative number`);
+    if (['age', 'annualIncome', 'annual_income'].includes(key) && (!Number.isFinite(value) || value < 0)) errors.push(`${key} must be a non-negative number`);
     if (['isStudent', 'isRuralResident'].includes(key) && typeof value !== 'boolean') errors.push(`${key} must be boolean`);
+    if (['owns_land', 'ownsLand'].includes(key) && typeof value !== 'boolean') errors.push(`${key} must be boolean`);
+    if (['documents', 'available_documents', 'documents_uploaded'].includes(key) && (!Array.isArray(value) || value.some((item) => typeof item !== 'string'))) errors.push(`${key} must be an array of strings`);
   }
   return errors;
 }

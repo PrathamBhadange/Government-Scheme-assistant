@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import cors from 'cors';
 import schemeRoutes from './routes/schemeRoutes.js';
@@ -7,6 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '32kb' }));
 app.use('/api/schemes', schemeRoutes);
+app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend')));
 app.use((req, res) => res.status(404).json({ success: false, message: 'Route not found', errors: [] }));
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);

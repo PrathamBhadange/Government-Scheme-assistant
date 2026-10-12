@@ -12,8 +12,8 @@ import {
 test('search is case-insensitive and scheme filters work', () => {
   assert.equal(searchSchemes('LEARNING').length, 1);
   assert.equal(searchSchemes('', { department: 'Demo Housing Department' }).length, 2);
-  assert.equal(searchSchemes('', { status: 'ACTIVE' }).length, 4);
-  assert.equal(searchSchemes('', { category: 'AGRICULTURE' }).length, 1);
+  assert.equal(searchSchemes('', { status: 'ACTIVE' }).length, 10);
+  assert.equal(searchSchemes('', { category: 'AGRICULTURE' }).length, 2);
 });
 
 test('finds a scheme by schemeId and returns null for missing ID', () => {
@@ -51,7 +51,20 @@ test('handles inclusive boundaries and inactive/closed schemes', () => {
 test('returns required documents and all-scheme results', () => {
   assert.deepEqual(getRequiredDocuments('SCH002'), ['IDENTITY_PROOF', 'ADDRESS_PROOF', 'LAND_RECORD']);
   assert.equal(getRequiredDocuments('UNKNOWN'), null);
-  assert.equal(checkEligibility({}).length, 6);
+  assert.equal(checkEligibility({}).length, 12);
+});
+
+test('evaluates imported occupation and land criteria', () => {
+  assert.equal(checkSchemeEligibility('PM_KISAN', { age: 42, occupation: 'Student / Part-time Farming', ownsLand: false }).eligibilityStatus, 'NOT_ELIGIBLE');
+  assert.equal(checkSchemeEligibility('PM_KISAN', { age: 42, occupation: 'Farmer', ownsLand: true }).eligibilityStatus, 'ELIGIBLE');
+  assert.equal(checkSchemeEligibility('POST_MATRIC_SCHOLARSHIP', { age: 22, annualIncome: 150000, occupation: 'Student' }).eligibilityStatus, 'ELIGIBLE');
+  assert.equal(checkSchemeEligibility('PMMY', { age: 30, occupation: 'Student' }).eligibilityStatus, 'NOT_ELIGIBLE');
+});
+
+test('supports uploaded citizen field aliases through the service contract', () => {
+  const result = checkSchemeEligibility('PM_KISAN', { age: 42, annual_income: 95000, occupation: 'Farmer', owns_land: true });
+  assert.equal(result.eligibilityStatus, 'ELIGIBLE');
+  assert.deepEqual(result.missingInformation, []);
 });
 
 test('validates invalid scheme data', () => {

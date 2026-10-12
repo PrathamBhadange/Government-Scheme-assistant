@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAARTHI | Citizen Scheme Assistant (DPI Architecture)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .fade-out { opacity: 0; pointer-events: none; transition: opacity 0.4s ease-out; }
+  </style>
+</head>
+<body class="bg-slate-100/70 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <!-- 1. ENTRANCE & WELCOME SPLASH SCREEN -->
+  <div id="splash-screen" class="fixed inset-0 z-50 bg-slate-900 text-white flex flex-col items-center justify-center p-6 transition-all duration-500">
+    <div class="max-w-md w-full text-center space-y-6">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-semibold animate-pulse">
+        <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+        <span>India Digital Public Infrastructure (DPI) Prototype</span>
+      </div>
+
+      <div class="h-16 w-16 mx-auto rounded-2xl bg-gradient-to-tr from-blue-700 to-indigo-600 flex items-center justify-center text-amber-300 shadow-xl border border-white/10">
+        <i data-lucide="shield-check" class="w-9 h-9"></i>
+      </div>
+
+      <div>
+        <h1 class="text-3xl font-extrabold tracking-tight">SAARTHI</h1>
+        <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">AI-Powered Citizen Scheme Assistant</p>
+      </div>
+
+      <div class="p-4 rounded-xl bg-slate-800/80 border border-slate-700 text-left space-y-2 text-xs text-slate-300">
+        <div class="flex items-center gap-2 text-emerald-400 font-semibold">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Local backend demo ready; external integrations not connected</span>
+        </div>
+        <div class="flex items-center gap-2 text-blue-300 font-semibold">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Language labels available in this prototype</span>
+        </div>
+        <div class="flex items-center gap-2 text-amber-300 font-semibold">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i>
+          <span>Demo citizen profile login available</span>
+        </div>
+      </div>
+
+      <button onclick="dismissSplash()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2">
+        <span>Enter Citizen Portal</span>
+        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Government Portal Header Strip -->
+  <div class="h-1.5 w-full bg-gradient-to-r from-orange-500 via-white to-emerald-600"></div>
+
+  <!-- Main Top Navbar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Brand & DPI Indicator -->
+      <div class="flex items-center gap-3">
+        <div class="h-10 w-10 rounded-xl bg-blue-900 text-amber-400 flex items-center justify-center font-bold shadow-sm">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-extrabold text-slate-900 tracking-tight">SAARTHI</span>
+            <span class="text-slate-300">|</span>
+            <span class="text-xs font-bold text-slate-700 hidden sm:inline" id="txt-portal-title">Citizen Scheme Assistant</span>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-800 border border-blue-200">
+              DPI Core
+            </span>
+          </div>
+          <!-- Live API Setu Indicator -->
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span class="text-[11px] font-medium text-slate-600" id="txt-api-status">Local Scheme API connection pending</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Language Switcher & Controls -->
+      <div class="flex items-center gap-3">
+        <!-- Bhashini Language Switcher -->
+        <div class="flex items-center gap-1.5 bg-slate-100 rounded-lg p-1 border border-slate-200">
+          <i data-lucide="languages" class="w-3.5 h-3.5 text-slate-500 ml-1"></i>
+          <select id="lang-select" onchange="changeLanguage(this.value)" class="bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer pr-1">
+            <option value="en">English</option>
+            <option value="mr">मराठी</option>
+            <option value="hi">हिन्दी</option>
+          </select>
+        </div>
+
+        <div id="nav-profile-section" class="hidden flex items-center gap-2.5">
+          <div class="text-right hidden md:block">
+            <p id="nav-user-name" class="text-xs font-bold text-slate-900">Rahul Patil</p>
+            <p id="nav-user-eKYC" class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1 justify-end">
+              <i data-lucide="badge-check" class="w-3 h-3"></i> Demo profile
+            </p>
+          </div>
+          <button onclick="logoutCitizen()" class="px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 border border-slate-200 rounded-lg transition-colors flex items-center gap-1.5">
+            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+            <span id="txt-logout">Exit</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- 2. AUTHENTICATION & e-KYC VIEW -->
+  <section id="auth-view" class="flex-1 flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden">
+      
+      <!-- Civic Banner -->
+      <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white p-6 text-center">
+        <div class="inline-flex p-3 rounded-xl bg-white/10 backdrop-blur-sm mb-3">
+          <i data-lucide="landmark" class="w-8 h-8 text-amber-400"></i>
+        </div>
+        <h2 class="text-xl font-bold" id="auth-header-title">National Citizen Welfare Gateway</h2>
+        <p class="text-xs text-blue-200 mt-1 max-w-sm mx-auto" id="auth-header-subtitle">
+          Log in with India's unified authentication infrastructure to unlock eligible welfare schemes
+        </p>
+      </div>
+
+      <div class="p-6 space-y-4">
+        <!-- MeriPehchaan (National SSO) Primary Button -->
+        <button onclick="loginMeriPehchaan()" class="w-full p-4 rounded-xl border-2 border-blue-600 bg-blue-50/70 hover:bg-blue-100/70 transition-all flex items-center justify-between group shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-lg bg-blue-700 text-white flex items-center justify-center font-bold">
+              <i data-lucide="fingerprint" class="w-6 h-6"></i>
+            </div>
+            <div class="text-left">
+              <div class="flex items-center gap-1.5">
+                <span class="text-xs font-extrabold text-blue-950">Use demo citizen profile</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded bg-blue-200 text-blue-800 font-bold">DEMO</span>
+              </div>
+              <p class="text-[11px] text-blue-800">No MeriPehchaan or DigiLocker connection is made</p>
+            </div>
+          </div>
+          <i data-lucide="arrow-right" class="w-4 h-4 text-blue-700 group-hover:translate-x-1 transition-transform"></i>
+        </button>
+
+        <div class="relative flex items-center justify-center">
+          <div class="border-t border-slate-200 w-full"></div>
+          <span class="bg-white px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">or Standard Manual Entry</span>
+        </div>
+
+        <!-- Manual Credentials Form -->
+        <form onsubmit="handleManualLogin(event)" class="space-y-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-mobile">Mobile Number / Aadhaar Virtual ID</label>
+            <input type="tel" id="input-mobile" required value="9876543210" placeholder="10-digit registered number" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-name">Full Name</label>
+              <input type="text" id="input-name" required value="Rahul Patil" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-state">State</label>
+              <select id="input-state" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800">
+                <option value="Maharashtra" selected>Maharashtra</option>
+                <option value="Karnataka">Karnataka</option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-occupation">Occupation</label>
+              <select id="input-occupation" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800">
+                <option value="Student" selected>Student</option>
+                <option value="Farmer">Farmer</option>
+                <option value="Self-Employed">Self-Employed</option>
+                <option value="Unemployed">Unemployed</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-income">Annual Income (₹)</label>
+              <input type="number" id="input-income" required value="150000" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800" />
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-black text-white font-bold text-sm rounded-lg shadow-sm transition-colors mt-2" id="btn-login-submit">
+            Proceed to Citizen Portal
+          </button>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. MAIN CIVIC DASHBOARD (3-Tab Architecture) -->
+  <main id="dashboard-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
+    
+    <!-- Top 3 Tabs Navigation -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between border-b border-slate-200 pb-3 gap-3">
+      <nav class="flex space-x-2 bg-slate-200/80 p-1 rounded-xl">
+        <button id="nav-tab-1" onclick="switchMainTab(1)" class="px-4 py-2 rounded-lg text-xs font-bold transition-all bg-white text-blue-900 shadow-xs flex items-center gap-2">
+          <i data-lucide="compass" class="w-4 h-4"></i>
+          <span id="tab-title-1">Scheme Discovery & Eligibility</span>
+        </button>
+        <button id="nav-tab-2" onclick="switchMainTab(2)" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2">
+          <i data-lucide="folder-lock" class="w-4 h-4"></i>
+          <span id="tab-title-2">Digital Locker & Document Readiness</span>
+          <span id="badge-doc-count" class="px-1.5 py-0.2 rounded-full bg-slate-300 text-slate-800 text-[10px]">2</span>
+        </button>
+        <button id="nav-tab-3" onclick="switchMainTab(3)" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2">
+          <i data-lucide="send" class="w-4 h-4"></i>
+          <span id="tab-title-3">Application & Tracking Agent</span>
+        </button>
+      </nav>
+
+      <!-- Active Citizen Micro Pill -->
+      <div class="flex items-center gap-2 text-xs bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+        <span class="text-slate-400 font-medium">Citizen:</span>
+        <span id="pill-user-summary" class="font-bold text-slate-800">Rahul Patil (22, Student, ₹1.5L)</span>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: SCHEME DISCOVERY & ELIGIBILITY -->
+    <!-- ========================================== -->
+    <section id="tab-content-1" class="mt-6 space-y-6">
+      
+      <!-- Summary Metric Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide" id="txt-card-total">Total Schemes Ingested</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span id="stat-total" class="text-2xl font-extrabold text-slate-900">6</span>
+            <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">Local API</span>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-2xs">
+          <span class="text-xs font-semibold text-emerald-800 uppercase tracking-wide" id="txt-card-ready">Ready to Apply (Eligible)</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span id="stat-eligible" class="text-2xl font-extrabold text-emerald-600">0</span>
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-amber-200 shadow-2xs">
+          <span class="text-xs font-semibold text-amber-800 uppercase tracking-wide" id="txt-card-action">Action Needed (Missing Docs)</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span id="stat-action" class="text-2xl font-extrabold text-amber-600">0</span>
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600"></i>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
+          <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide" id="txt-card-ineligible">Ineligible (Criteria Fail)</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span id="stat-ineligible" class="text-2xl font-extrabold text-slate-500">0</span>
+            <i data-lucide="x-circle" class="w-4 h-4 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Category Filters -->
+      <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+        <div class="relative flex-1">
+          <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+          <input 
+            type="text" 
+            id="scheme-search" 
+            oninput="applyFilters()" 
+            placeholder="Search welfare scheme, ministry, or keywords..." 
+            class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 text-slate-800"
+          />
+        </div>
+
+        <div class="flex flex-wrap gap-1.5" id="category-pills">
+          <button onclick="setCategoryFilter('all')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white" data-cat="all">All</button>
+          <button onclick="setCategoryFilter('Agriculture')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="Agriculture">Agriculture</button>
+          <button onclick="setCategoryFilter('Healthcare')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="Healthcare">Healthcare</button>
+          <button onclick="setCategoryFilter('Education')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="Education">Education</button>
+          <button onclick="setCategoryFilter('Social Welfare')" class="cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="Social Welfare">Social Welfare</button>
+        </div>
+      </div>
+
+      <!-- Scheme Cards Stream -->
+      <div id="schemes-grid" class="space-y-4">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: DIGITAL LOCKER & DOCUMENT READINESS -->
+    <!-- ========================================== -->
+    <section id="tab-content-2" class="hidden mt-6 space-y-6">
+      
+      <!-- DigiLocker Sync Hero Banner -->
+      <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold">
+              National Document Repository
+            </span>
+            <span class="text-xs text-blue-200">Local profile only</span>
+          </div>
+          <h3 class="text-lg font-bold">Citizen Document Profile</h3>
+          <p class="text-xs text-slate-300 max-w-xl leading-relaxed">
+            This prototype stores only local document labels. It does not connect to DigiLocker or verify documents.
+          </p>
+        </div>
+        
+        <button id="btn-sync-all-digilocker" onclick="syncDigiLockerAll()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 shrink-0">
+          <i data-lucide="refresh-cw" class="w-4 h-4" id="icon-sync-spinner"></i>
+          <span id="txt-sync-btn">Update local profile</span>
+        </button>
+      </div>
+
+      <!-- Document Vault Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="vault-cards-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: APPLICATION & TRACKING AGENT -->
+    <!-- ========================================== -->
+    <section id="tab-content-3" class="hidden mt-6 space-y-6">
+      
+      <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm max-w-3xl mx-auto space-y-6">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-bold">
+              Step-by-Step AI Submission
+            </span>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 mt-1">Automated Scheme Application Agent</h3>
+          <p class="text-xs text-slate-500">
+            PBL Prototype uses local demo profile data; external identity and document services are not connected.
+          </p>
+        </div>
+
+        <!-- 3 Step Progress Bar -->
+        <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold border-y border-slate-100 py-3">
+          <div class="text-blue-900 flex items-center justify-center gap-1.5">
+            <span class="w-5 h-5 rounded-full bg-blue-900 text-white text-[11px] flex items-center justify-center">1</span>
+            <span>Profile Mapping</span>
+          </div>
+          <div class="text-slate-600 flex items-center justify-center gap-1.5" id="step-lbl-2">
+            <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[11px] flex items-center justify-center" id="step-num-2">2</span>
+            <span>Aadhaar OTP</span>
+          </div>
+          <div class="text-slate-400 flex items-center justify-center gap-1.5" id="step-lbl-3">
+            <span class="w-5 h-5 rounded-full bg-slate-200 text-slate-500 text-[11px] flex items-center justify-center" id="step-num-3">3</span>
+            <span>Ref Generation</span>
+          </div>
+        </div>
+
+        <!-- Scheme Target Selector -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Select Scheme to Apply For</label>
+          <select id="apply-scheme-select" class="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 font-medium text-slate-800">
+            <!-- Populated via JS -->
+          </select>
+        </div>
+
+        <!-- Auto-filled Field Preview -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+          <h4 class="font-bold text-slate-700 flex items-center gap-1.5">
+            <i data-lucide="check-check" class="w-4 h-4 text-emerald-600"></i>
+            <span>Pre-filled from local demo profile</span>
+          </h4>
+          <div class="grid grid-cols-2 gap-2 text-slate-600 pt-1">
+            <div>Beneficiary: <strong class="text-slate-900" id="apply-preview-name">Rahul Patil</strong></div>
+            <div>Aadhaar Linked Mobile: <strong class="text-slate-900">XXXX-XX-3210</strong></div>
+            <div>State Jurisdiction: <strong class="text-slate-900" id="apply-preview-state">Maharashtra</strong></div>
+            <div>Bank Account: <strong class="text-slate-900">SBI (A/C: *******8819)</strong></div>
+          </div>
+        </div>
+
+        <!-- OTP Checkpoint Box -->
+        <div id="otp-section" class="p-4 rounded-xl bg-blue-50/70 border border-blue-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold text-blue-950">Aadhaar e-Sign OTP Checkpoint</label>
+            <span class="text-[11px] text-blue-700 font-medium">Simulated OTP: <strong>492815</strong></span>
+          </div>
+          <div class="flex gap-2">
+            <input type="text" id="otp-input" value="492815" maxlength="6" class="w-36 text-center tracking-widest font-mono text-base font-bold px-3 py-2 bg-white border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-800 focus:outline-none" />
+            <button onclick="submitApplicationWithOTP()" class="flex-1 py-2 bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs rounded-lg transition-colors flex items-center justify-center gap-1.5">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Verify OTP & Dispatch Application</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Success Result Card (Hidden until submitted) -->
+        <div id="application-success-card" class="hidden p-5 rounded-xl bg-emerald-50 border border-emerald-300 space-y-3">
+          <div class="flex items-center gap-2 text-emerald-900 font-bold text-sm">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i>
+            <span>Application Acknowledgment Generated</span>
+          </div>
+          <p class="text-xs text-emerald-800">
+            Application workflow is a local prototype; no government submission is performed.
+          </p>
+          <div class="p-3 bg-white rounded-lg border border-emerald-200 flex items-center justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 block font-semibold uppercase">Acknowledgment Ref Number</span>
+              <span id="application-ref-number" class="text-sm font-mono font-extrabold text-slate-900">MH-2026-SRT-94821</span>
+            </div>
+            <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-800 text-xs font-bold">Status: Forwarded to Tehsildar</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <div id="scheme-modal" class="hidden fixed inset-0 z-40 bg-slate-900/50 p-4 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[80vh] overflow-auto">
+      <div class="p-5 border-b border-slate-200 flex items-start justify-between gap-4">
+        <div>
+          <h3 id="scheme-modal-title" class="text-lg font-bold text-slate-900">Scheme details</h3>
+          <p id="scheme-modal-status" class="text-xs text-slate-500 mt-1"></p>
+        </div>
+        <button onclick="closeSchemeModal()" class="text-slate-500 hover:text-slate-900 text-xl" aria-label="Close">&times;</button>
+      </div>
+      <div id="scheme-modal-content" class="p-5 text-sm text-slate-700"></div>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC & DATASET -->
+  <script>
+    // 1. REAL SCHEMES DATASET
+    const SCHEMES_DATABASE = [
+      {
+        id: "pm-kisan",
+        name: "PM Kisan Samman Nidhi (PM-KISAN)",
+        category: "Agriculture",
+        summary: "Direct income support of ₹6,000 per year in three installments for land-owning farmer households.",
+        official_url: "https://pmkisan.gov.in/",
+        min_age: 18,
+        max_age: null,
+        max_income: null,
+        required_occupations: ["Farmer"],
+        requires_land: true,
+        required_docs: ["Aadhaar Card", "Bank Passbook", "Land 7/12 Extract"]
+      },
+      {
+        id: "pmsby",
+        name: "Pradhan Mantri Suraksha Bima Yojana (PMSBY)",
+        category: "Social Welfare",
+        summary: "Accidental death and disability insurance coverage of ₹2 Lakh for citizens aged 18 to 70 at ₹20/year.",
+        official_url: "https://jansuraksha.gov.in/",
+        min_age: 18,
+        max_age: 70,
+        max_income: null,
+        required_occupations: ["ANY"],
+        requires_land: false,
+        required_docs: ["Aadhaar Card", "Bank Passbook"]
+      },
+      {
+        id: "pm-jay",
+        name: "Ayushman Bharat PM-JAY",
+        category: "Healthcare",
+        summary: "Health insurance of up to ₹5,00,000 per family/year for secondary and tertiary inpatient care.",
+        official_url: "https://pmjay.gov.in/",
+        min_age: null,
+        max_age: null,
+        max_income: 250000,
+        required_occupations: ["ANY"],
+        requires_land: false,
+        required_docs: ["Aadhaar Card", "Ration Card", "Income Certificate"]
+      },
+      {
+        id: "post-matric-scholarship",
+        name: "Post-Matric Scholarship Scheme",
+        category: "Education",
+        summary: "Financial grant for post-matriculation higher education fees and maintenance allowances.",
+        official_url: "https://scholarships.gov.in/",
+        min_age: 15,
+        max_age: 30,
+        max_income: 250000,
+        required_occupations: ["Student"],
+        requires_land: false,
+        required_docs: ["Aadhaar Card", "Bank Passbook", "Income Certificate", "College ID / Fee Receipt"]
+      },
+      {
+        id: "mudra-yojana",
+        name: "Pradhan Mantri Mudra Yojana (PMMY)",
+        category: "Social Welfare",
+        summary: "Collateral-free micro-credit loans up to ₹10 Lakh for small enterprise initiatives and self-employed youth.",
+        official_url: "https://financialservices.gov.in/",
+        min_age: 18,
+        max_age: 65,
+        max_income: null,
+        required_occupations: ["Self-Employed"],
+        requires_land: false,
+        required_docs: ["Aadhaar Card", "Bank Passbook", "Business Proof"]
+      },
+      {
+        id: "apy",
+        name: "Atal Pension Yojana (APY)",
+        category: "Social Welfare",
+        summary: "Guaranteed monthly pension (₹1,000 - ₹5,000) post 60 years of age for workers in the unorganized sector.",
+        official_url: "https://jansuraksha.gov.in/",
+        min_age: 18,
+        max_age: 40,
+        max_income: null,
+        required_occupations: ["ANY"],
+        requires_land: false,
+        required_docs: ["Aadhaar Card", "Bank Passbook"]
+      }
+    ];
+
+    // Master list of welfare certificates in vault
+    const MASTER_DOCUMENTS = [
+      { name: "Aadhaar Card", source: "UIDAI e-KYC", icon: "fingerprint" },
+      { name: "Bank Passbook", source: "NPCI / Bank e-Sync", icon: "landmark" },
+      { name: "Income Certificate", source: "e-District / Tahsil", icon: "file-text" },
+      { name: "Land 7/12 Extract", source: "Bhulekh / Land Records", icon: "map" },
+      { name: "College ID / Fee Receipt", source: "State Higher Ed Portal", icon: "graduation-cap" },
+      { name: "Ration Card", source: "Food & Civil Supplies", icon: "utensils" }
+    ];
+
+    // 2. BHASHINI TRANSLATIONS DICTIONARY
+    const TRANSLATIONS = {
+      en: {
+        portalTitle: "Citizen Scheme Assistant",
+        apiStatus: "Local Scheme API connection pending",
+        logout: "Exit",
+        authTitle: "National Citizen Welfare Gateway",
+        authSubtitle: "Log in with India's unified authentication infrastructure to unlock eligible welfare schemes",
+        tab1: "Scheme Discovery & Eligibility",
+        tab2: "Digital Locker & Document Readiness",
+        tab3: "Application & Tracking Agent",
+        cardTotal: "Total Schemes Ingested",
+        cardReady: "Ready to Apply (Eligible)",
+        cardAction: "Action Needed",
+        cardIneligible: "Ineligible (Criteria Fail)",
+        sourceBadge: "Source: Local Scheme API",
+        eligibleBadge: "Eligible",
+        actionBadge: "Missing Documents",
+        ineligibleBadge: "Not Eligible",
+        btnDigiResolve: "Update local profile",
+        officialLink: "Official Portal"
+      },
+      mr: {
+        portalTitle: "नागरिक योजना सहाय्यक",
+        apiStatus: "API सेतू आणि डिजीलॉकर गेटवे जोडलेले आहे",
+        logout: "बाहेर पडा",
+        authTitle: "राष्ट्रीय नागरिक कल्याण पोर्टल",
+        authSubtitle: "पात्र कल्याणकारी योजना तपासण्यासाठी भारताच्या एकात्मिक प्रणालीसह लॉग इन करा",
+        tab1: "योजना शोध व पात्रता",
+        tab2: "डिजीटल लॉकर व कागदपत्रे",
+        tab3: "अर्ज व ट्रॅकिंग एजंट",
+        cardTotal: "एकूण उपलब्ध योजना",
+        cardReady: "अर्ज करण्यास पात्र",
+        cardAction: "कृती आवश्यक",
+        cardIneligible: "अपात्र योजना",
+        sourceBadge: "स्रोत: स्थानिक योजना API",
+        eligibleBadge: "पात्र",
+        actionBadge: "कागदपत्रे बाकी",
+        ineligibleBadge: "अपात्र",
+        btnDigiResolve: "डिजीलॉकरद्वारे जोडा",
+        officialLink: "अधिकृत पोर्टल"
+      },
+      hi: {
+        portalTitle: "नागरिक योजना सहायक",
+        apiStatus: "API सेतु और डिजिलॉकर गेटवे कनेक्टेड",
+        logout: "लॉग आउट",
+        authTitle: "राष्ट्रीय नागरिक कल्याण पोर्टल",
+        authSubtitle: "कल्याणकारी योजनाओं के लिए भारत के एकीकृत प्रमाणीकरण से लॉगिन करें",
+        tab1: "योजना खोज और पात्रता",
+        tab2: "डिजिटल लॉकर एवं दस्तावेज़",
+        tab3: "आवेदन एवं ट्रैकिंग एजेंट",
+        cardTotal: "कुल उपलब्ध योजनाएं",
+        cardReady: "आवेदन के लिए पात्र",
+        cardAction: "कार्रवाई आवश्यक",
+        cardIneligible: "अपात्र योजनाएं",
+        sourceBadge: "स्रोत: स्थानीय योजना API",
+        eligibleBadge: "पात्र",
+        actionBadge: "दस्तावेज़ आवश्यक",
+        ineligibleBadge: "अपात्र",
+        btnDigiResolve: "डिजिलॉकर से जोड़ें",
+        officialLink: "आधिकारिक पोर्टल"
+      }
+    };
+
+    // 3. APPLICATION STATE
+    let currentLang = "en";
+    let citizen = null;
+    let selectedCategory = "all";
+    let searchQuery = "";
+    let apiSchemes = [];
+    let apiEligibility = [];
+    let apiLoading = false;
+    let apiError = "";
+    let selectedSchemeDocuments = {};
+    const documentLabels = {
+      IDENTITY_PROOF: "Identity proof",
+      ADDRESS_PROOF: "Address proof",
+      INCOME_PROOF: "Income proof",
+      PASSPORT: "Passport",
+      CASTE_CERTIFICATE: "Caste certificate",
+      LAND_RECORD: "Land record",
+      OTHER: "Other"
+    };
+
+    async function loadSchemeData() {
+      apiLoading = true;
+      apiError = "";
+      apiSchemes = [];
+      apiEligibility = [];
+      renderSchemes();
+      const citizenInput = {
+        age: citizen.age,
+        annualIncome: citizen.income,
+        occupation: citizen.occupation,
+        ownsLand: citizen.owns_land,
+        documents: citizen.documents
+      };
+      try {
+        const [schemesResponse, eligibilityResponse] = await Promise.all([
+          fetch("/api/schemes?status=ACTIVE"),
+          fetch("/api/schemes/eligibility", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(citizenInput)
+          })
+        ]);
+        if (!schemesResponse.ok || !eligibilityResponse.ok) {
+          throw new Error("Scheme API request failed");
+        }
+        const schemesPayload = await schemesResponse.json();
+        const eligibilityPayload = await eligibilityResponse.json();
+        if (!schemesPayload || !Array.isArray(schemesPayload.data)) {
+          throw new Error("Scheme API returned an invalid listing response");
+        }
+        if (!eligibilityPayload || !Array.isArray(eligibilityPayload.data)) {
+          throw new Error("Scheme API returned an invalid eligibility response");
+        }
+        apiSchemes = schemesPayload.data;
+        apiEligibility = eligibilityPayload.data;
+        if (apiSchemes.some((scheme) => !scheme.schemeId || !scheme.name)) {
+          throw new Error("Scheme API returned incomplete scheme data");
+        }
+        if (apiEligibility.some((result) => !result.schemeId || !result.eligibilityStatus)) {
+          throw new Error("Scheme API returned incomplete eligibility data");
+        }
+        apiLoading = false;
+        document.getElementById("txt-api-status").innerText = `Connected to local Scheme API (${apiSchemes.length} active schemes)`;
+        populateApplyDropdown();
+        renderSchemes();
+      } catch (error) {
+        apiLoading = false;
+        apiError = error.message || "Unable to load scheme data";
+        document.getElementById("txt-api-status").innerText = "Scheme API unavailable";
+        renderSchemes();
+        console.error("Unable to load scheme data", error);
+      }
+    }
+
+    // 4. SPLASH SCREEN CONTROLLER
+    function dismissSplash() {
+      const splash = document.getElementById("splash-screen");
+      splash.classList.add("fade-out");
+      setTimeout(() => splash.classList.add("hidden"), 400);
+    }
+    // Auto-fade splash screen after 1.5s
+    setTimeout(() => {
+      dismissSplash();
+    }, 1500);
+
+    // 5. MERIPEHCHAAN & AUTH LOGIC
+    function loginMeriPehchaan() {
+      citizen = {
+        name: "Rahul Patil",
+        mobile: "9876543210",
+        state: "Maharashtra",
+        age: 22,
+        occupation: "Student",
+        income: 150000,
+        owns_land: false,
+        documents: ["Aadhaar Card", "Bank Passbook"],
+        eKYC: true
+      };
+      launchDashboard();
+    }
+
+    function handleManualLogin(event) {
+      event.preventDefault();
+      citizen = {
+        name: document.getElementById("input-name").value,
+        mobile: document.getElementById("input-mobile").value,
+        state: document.getElementById("input-state").value,
+        age: 22,
+        occupation: document.getElementById("input-occupation").value,
+        income: parseInt(document.getElementById("input-income").value),
+        owns_land: false,
+        documents: ["Aadhaar Card", "Bank Passbook"],
+        eKYC: false
+      };
+      launchDashboard();
+    }
+
+    function logoutCitizen() {
+      citizen = null;
+      document.getElementById("auth-view").classList.remove("hidden");
+      document.getElementById("dashboard-view").classList.add("hidden");
+      document.getElementById("nav-profile-section").classList.add("hidden");
+    }
+
+    function launchDashboard() {
+      document.getElementById("auth-view").classList.add("hidden");
+      document.getElementById("dashboard-view").classList.remove("hidden");
+      document.getElementById("nav-profile-section").classList.remove("hidden");
+
+      document.getElementById("nav-user-name").innerText = citizen.name;
+      document.getElementById("pill-user-summary").innerText = 
+        `${citizen.name} (${citizen.age}, ${citizen.occupation}, ₹${citizen.income.toLocaleString('en-IN')})`;
+
+      populateApplyDropdown();
+      renderAll();
+      loadSchemeData();
+      lucide.createIcons();
+    }
+
+    // 6. MULTILINGUAL (BHASHINI) SWITCHER
+    function changeLanguage(lang) {
+      currentLang = lang;
+      const t = TRANSLATIONS[lang];
+
+      document.getElementById("txt-portal-title").innerText = t.portalTitle;
+      document.getElementById("txt-api-status").innerText = t.apiStatus;
+      document.getElementById("txt-logout").innerText = t.logout;
+      document.getElementById("auth-header-title").innerText = t.authTitle;
+      document.getElementById("auth-header-subtitle").innerText = t.authSubtitle;
+      document.getElementById("tab-title-1").innerText = t.tab1;
+      document.getElementById("tab-title-2").innerText = t.tab2;
+      document.getElementById("tab-title-3").innerText = t.tab3;
+      document.getElementById("txt-card-total").innerText = t.cardTotal;
+      document.getElementById("txt-card-ready").innerText = t.cardReady;
+      document.getElementById("txt-card-action").innerText = t.cardAction;
+      document.getElementById("txt-card-ineligible").innerText = t.cardIneligible;
+
+      renderAll();
+    }
+
+    // 7. TAB NAVIGATION
+    function switchMainTab(tabIndex) {
+      [1, 2, 3].forEach(idx => {
+        const btn = document.getElementById(`nav-tab-${idx}`);
+        const content = document.getElementById(`tab-content-${idx}`);
+        if (idx === tabIndex) {
+          btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all bg-white text-blue-900 shadow-xs flex items-center gap-2";
+          content.classList.remove("hidden");
+        } else {
+          btn.className = "px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 flex items-center gap-2";
+          content.classList.add("hidden");
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // 8. ELIGIBILITY ENGINE
+    function evaluateScheme(scheme, user) {
+      const reasons = [];
+
+      // Age criteria
+      if (scheme.min_age !== null && user.age < scheme.min_age) {
+        reasons.push(`Minimum age required is ${scheme.min_age} yrs (Citizen is ${user.age}).`);
+      } else if (scheme.max_age !== null && user.age > scheme.max_age) {
+        reasons.push(`Maximum age limit is ${scheme.max_age} yrs (Citizen is ${user.age}).`);
+      }
+
+      // Income criteria
+      if (scheme.max_income !== null && user.income > scheme.max_income) {
+        reasons.push(`Annual income ₹${user.income.toLocaleString('en-IN')} exceeds cap of ₹${scheme.max_income.toLocaleString('en-IN')}.`);
+      }
+
+      // Land criteria
+      if (scheme.requires_land && !user.owns_land) {
+        reasons.push("Requires verified agricultural landholding records.");
+      }
+
+      // Occupation criteria
+      if (!scheme.required_occupations.includes("ANY")) {
+        const match = scheme.required_occupations.some(occ => user.occupation.toLowerCase().includes(occ.toLowerCase()));
+        if (!match) {
+          reasons.push(`Occupation condition unsatisfied: Requires ${scheme.required_occupations.join(", ")}.`);
+        }
+      }
+
+      if (reasons.length > 0) {
+        return { status: "not_eligible", reasons, missingDocs: [] };
+      }
+
+      // Document audit
+      const missing = scheme.required_docs.filter(doc => !user.documents.includes(doc));
+      if (missing.length === 0) {
+        return {
+          status: "eligible",
+          reasons: [
+            "All demographic, economic, and occupational criteria satisfied.",
+            "All required document labels exist in the local profile."
+          ],
+          missingDocs: []
+        };
+      } else {
+        return {
+          status: "potentially_eligible",
+          reasons: [
+            "Demographic and economic criteria satisfied.",
+            "Awaiting document information in the local profile."
+          ],
+          missingDocs: missing
+        };
+      }
+    }
+
+    // 9. SCHEME DISCOVERY RENDERING
+    function renderSchemes() {
+      const container = document.getElementById("schemes-grid");
+      const t = TRANSLATIONS[currentLang];
+
+      const evaluated = apiSchemes.length
+        ? apiSchemes.map(scheme => {
+          const result = apiEligibility.find(item => item.schemeId === scheme.schemeId) || {};
+          const statusMap = {
+            ELIGIBLE: "eligible",
+            NOT_ELIGIBLE: "not_eligible",
+            NEEDS_INFORMATION: "potentially_eligible"
+          };
+          return {
+            id: scheme.schemeId,
+            name: scheme.name,
+            category: scheme.category || scheme.department,
+            summary: scheme.description,
+            official_url: scheme.sourceUrl,
+            required_docs: scheme.requiredDocuments || [],
+            status: statusMap[result.eligibilityStatus] || "potentially_eligible",
+            reasons: result.reasons || [],
+            missingInformation: result.missingInformation || [],
+            eligibilityStatus: result.eligibilityStatus
+          };
+        })
+        : [];
+
+      if (apiLoading) {
+        container.innerHTML = `
+          <div class="bg-white p-12 text-center rounded-xl border border-slate-200">
+            <p class="text-sm font-semibold text-slate-700">Loading schemes and eligibility...</p>
+          </div>`;
+        return;
+      }
+      if (apiError) {
+        container.innerHTML = `
+          <div class="bg-white p-12 text-center rounded-xl border border-red-200">
+            <p class="text-sm font-bold text-red-800">Unable to load scheme data</p>
+            <p class="text-xs text-slate-600 mt-2">${escapeHtml(apiError)}</p>
+            <button onclick="loadSchemeData()" class="mt-4 px-4 py-2 bg-blue-900 text-white rounded-lg text-xs font-bold">Retry</button>
+          </div>`;
+        return;
+      }
+
+      // Update Counts
+      const total = evaluated.length;
+      const eligible = evaluated.filter(s => s.status === "eligible").length;
+      const action = evaluated.filter(s => s.status === "potentially_eligible").length;
+      const ineligible = evaluated.filter(s => s.status === "not_eligible").length;
+
+      document.getElementById("stat-total").innerText = total;
+      document.getElementById("stat-eligible").innerText = eligible;
+      document.getElementById("stat-action").innerText = action;
+      document.getElementById("stat-ineligible").innerText = ineligible;
+      document.getElementById("badge-doc-count").innerText = citizen.documents.length;
+
+      // Filter
+      const filtered = evaluated.filter(item => {
+        if (selectedCategory !== "all" && item.category !== selectedCategory) return false;
+        if (searchQuery.trim() !== "") {
+          const q = searchQuery.toLowerCase();
+          return item.name.toLowerCase().includes(q) || item.category.toLowerCase().includes(q) || item.summary.toLowerCase().includes(q);
+        }
+        return true;
+      });
+
+      if (evaluated.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-12 text-center rounded-xl border border-slate-200">
+            <i data-lucide="inbox" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+            <p class="text-xs font-bold text-slate-700">No active schemes were returned by the backend.</p>
+          </div>
+        `;
+        return;
+      }
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="bg-white p-12 text-center rounded-xl border border-slate-200">
+            <i data-lucide="search-x" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
+            <p class="text-xs font-bold text-slate-700">No schemes found matching the search filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(scheme => {
+        const isEligible = scheme.status === "eligible";
+        const isPotential = scheme.status === "potentially_eligible";
+
+        let badge = "";
+        if (isEligible) {
+          badge = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300">
+              <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+              ${t.eligibleBadge}
+            </span>
+          `;
+        } else if (isPotential) {
+          badge = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-300">
+              <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-600"></i>
+              ${t.actionBadge}
+            </span>
+          `;
+        } else {
+          badge = `
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-600 border border-slate-200">
+              <i data-lucide="x-circle" class="w-3.5 h-3.5 text-slate-400"></i>
+              ${t.ineligibleBadge}
+            </span>
+          `;
+        }
+
+        return `
+          <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs space-y-4 hover:border-slate-300 transition-all">
+            <!-- Header -->
+            <div class="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 pb-3">
+              <div class="space-y-1 max-w-xl">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 text-[10px] font-bold uppercase tracking-wider">
+                    ${scheme.category}
+                  </span>
+                  <span class="text-[10px] text-slate-400 font-semibold">${t.sourceBadge}</span>
+                </div>
+                <h4 class="text-base font-bold text-slate-900">${scheme.name}</h4>
+                <p class="text-xs text-slate-600">${scheme.summary}</p>
+              </div>
+              <div>${badge}</div>
+            </div>
+
+            <!-- Bullet Reasons -->
+            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-1 text-xs">
+              ${scheme.reasons.map(r => `
+                <div class="flex items-start gap-2 text-slate-700">
+                  <i data-lucide="${scheme.status === 'not_eligible' ? 'x-circle' : 'check'}" class="w-3.5 h-3.5 mt-0.5 ${scheme.status === 'not_eligible' ? 'text-red-500' : 'text-emerald-600'} shrink-0"></i>
+                  <span>${r}</span>
+                </div>
+              `).join("")}
+            </div>
+
+            <!-- Missing Docs Resolution Action -->
+            ${scheme.missingInformation && scheme.missingInformation.length > 0 ? `
+              <div class="p-3 bg-amber-50/80 rounded-lg border border-amber-200 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-amber-700"></i>
+                    Information needed:
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  ${scheme.missingInformation.map(field => `
+                    <span class="px-2.5 py-1.5 bg-amber-100 text-amber-900 rounded-lg text-xs font-semibold border border-amber-300">${field}</span>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ""}
+
+            <!-- Footer Action Links -->
+            <div class="flex items-center justify-between pt-1">
+              <span class="text-[11px] text-slate-500">Scheme ID: ${scheme.id}</span>
+              <div class="flex items-center gap-3">
+                <button onclick="openSchemeDetails('${scheme.id}')" class="text-xs font-bold text-slate-700 hover:text-blue-800 flex items-center gap-1">
+                  Details
+                </button>
+                <button onclick="openRequiredDocuments('${scheme.id}')" class="text-xs font-bold text-slate-700 hover:text-blue-800 flex items-center gap-1">
+                  Documents
+                </button>
+                ${isEligible ? `
+                  <button onclick="quickApplyScheme('${scheme.name}')" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+                    <span>Apply via Agent</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ""}
+                <a href="${scheme.official_url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-800 hover:underline flex items-center gap-1">
+                  <span>${t.officialLink}</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[character]));
+    }
+
+    function showSchemeModal(title, status, content) {
+      document.getElementById("scheme-modal-title").innerText = title;
+      document.getElementById("scheme-modal-status").innerText = status;
+      document.getElementById("scheme-modal-content").innerHTML = content;
+      document.getElementById("scheme-modal").classList.remove("hidden");
+    }
+
+    function closeSchemeModal() {
+      document.getElementById("scheme-modal").classList.add("hidden");
+    }
+
+    async function openSchemeDetails(schemeId) {
+      showSchemeModal("Loading scheme details...", "Please wait", "<p>Loading details from the Scheme API...</p>");
+      try {
+        const response = await fetch(`/api/schemes/${encodeURIComponent(schemeId)}`);
+        const payload = await response.json();
+        if (!response.ok || !payload.success || !payload.data || payload.data.schemeId !== schemeId) {
+          throw new Error(payload.message || "Scheme details were not found");
+        }
+        const scheme = payload.data;
+        showSchemeModal(
+          scheme.name,
+          `Scheme ID: ${scheme.schemeId} | Status: ${scheme.status}`,
+          `<div class="space-y-3">
+            <p>${escapeHtml(scheme.description)}</p>
+            <p><strong>Ministry:</strong> ${escapeHtml(scheme.ministry)}</p>
+            <p><strong>Department:</strong> ${escapeHtml(scheme.department)}</p>
+            <p><strong>Benefits:</strong> ${scheme.benefits.map(escapeHtml).join(", ")}</p>
+            <p><strong>Dates:</strong> ${escapeHtml(scheme.startDate)} to ${escapeHtml(scheme.endDate)}</p>
+            <a class="text-blue-800 font-semibold hover:underline" href="${escapeHtml(scheme.sourceUrl)}" target="_blank" rel="noopener noreferrer">Open source URL</a>
+          </div>`
+        );
+      } catch (error) {
+        showSchemeModal("Scheme details unavailable", "Request failed", `<p class="text-red-700">${escapeHtml(error.message)}</p><button onclick="openSchemeDetails('${escapeHtml(schemeId)}')" class="mt-4 px-4 py-2 bg-blue-900 text-white rounded-lg text-xs font-bold">Retry</button>`);
+      }
+    }
+
+    async function openRequiredDocuments(schemeId) {
+      showSchemeModal("Loading required documents...", `Scheme ID: ${schemeId}`, "<p>Loading requirements from the Scheme API...</p>");
+      try {
+        const response = await fetch(`/api/schemes/${encodeURIComponent(schemeId)}/documents`);
+        const payload = await response.json();
+        if (!response.ok || !payload.success || !payload.data || !Array.isArray(payload.data.requiredDocuments)) {
+          throw new Error(payload.message || "Required documents were not found");
+        }
+        const documents = payload.data.requiredDocuments;
+        selectedSchemeDocuments[schemeId] = documents;
+        showSchemeModal(
+          "Required documents",
+          `Scheme ID: ${schemeId}`,
+          documents.length
+            ? `<p class="mb-3">These are requirements returned by the backend. Availability and verification are not confirmed by this prototype.</p><ul class="list-disc pl-5 space-y-1">${documents.map((type) => `<li><strong>${escapeHtml(documentLabels[type] || type)}</strong> <span class="text-xs text-slate-500">(${escapeHtml(type)})</span></li>`).join("")}</ul>`
+            : "<p>No required documents were returned for this scheme.</p>"
+        );
+      } catch (error) {
+        showSchemeModal("Required documents unavailable", "Request failed", `<p class="text-red-700">${escapeHtml(error.message)}</p><button onclick="openRequiredDocuments('${escapeHtml(schemeId)}')" class="mt-4 px-4 py-2 bg-blue-900 text-white rounded-lg text-xs font-bold">Retry</button>`);
+      }
+    }
+
+    // 10. DIGITAL LOCKER VAULT RENDERING
+    function renderVault() {
+      const container = document.getElementById("vault-cards-grid");
+
+      container.innerHTML = MASTER_DOCUMENTS.map(doc => {
+        const isUploaded = citizen.documents.includes(doc.name);
+
+        return `
+          <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-2xs flex flex-col justify-between space-y-3">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-2.5">
+                <div class="h-9 w-9 rounded-lg ${isUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500'} flex items-center justify-center">
+                  <i data-lucide="${doc.icon}" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h5 class="text-xs font-bold text-slate-900">${doc.name}</h5>
+                  <p class="text-[10px] text-slate-400">${doc.source}</p>
+                </div>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${isUploaded ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500'}">
+                ${isUploaded ? 'Available in local profile' : 'Not confirmed'}
+              </span>
+            </div>
+
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              ${isUploaded ? `
+                <span class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3 h-3"></i> Present in local profile
+                </span>
+                <button onclick="toggleDocInVault('${doc.name}', false)" class="text-[11px] text-red-600 hover:underline font-semibold">
+                  Remove
+                </button>
+              ` : `
+                <button onclick="toggleDocInVault('${doc.name}', true)" class="w-full py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5">
+                  <i data-lucide="download-cloud" class="w-3.5 h-3.5 text-blue-700"></i>
+                  <span>Add to local profile</span>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+    }
+
+    // 11. DIGILOCKER SYNC ACTIONS
+    function toggleDocInVault(docName, add) {
+      if (add && !citizen.documents.includes(docName)) {
+        citizen.documents.push(docName);
+      } else if (!add) {
+        citizen.documents = citizen.documents.filter(d => d !== docName);
+      }
+      renderAll();
+    }
+
+    function resolveSingleDoc(docName) {
+      if (!citizen.documents.includes(docName)) {
+        citizen.documents.push(docName);
+      }
+      renderAll();
+    }
+
+    function syncDigiLockerAll() {
+      const spinner = document.getElementById("icon-sync-spinner");
+      const btnTxt = document.getElementById("txt-sync-btn");
+      spinner.classList.add("animate-spin");
+      btnTxt.innerText = "Updating local profile...";
+
+      setTimeout(() => {
+        MASTER_DOCUMENTS.forEach(d => {
+          if (!citizen.documents.includes(d.name)) {
+            citizen.documents.push(d.name);
+          }
+        });
+        spinner.classList.remove("animate-spin");
+        btnTxt.innerText = "Local profile updated";
+        renderAll();
+        setTimeout(() => {
+          btnTxt.innerText = "Update local profile";
+        }, 2000);
+      }, 700);
+    }
+
+    // 12. TAB 3: APPLICATION AGENT & TRACKING
+    function populateApplyDropdown() {
+      const sel = document.getElementById("apply-scheme-select");
+      const source = apiSchemes.map(s => ({ name: s.name, category: s.category || s.department }));
+      sel.innerHTML = source.map(s => `
+        <option value="${s.name}">${s.name} (${s.category})</option>
+      `).join("");
+      document.getElementById("apply-preview-name").innerText = citizen.name;
+      document.getElementById("apply-preview-state").innerText = citizen.state;
+    }
+
+    function quickApplyScheme(schemeName) {
+      switchMainTab(3);
+      document.getElementById("apply-scheme-select").value = schemeName;
+    }
+
+    function submitApplicationWithOTP() {
+      const scheme = document.getElementById("apply-scheme-select").value;
+      const refCode = "MH-2026-SRT-" + Math.floor(10000 + Math.random() * 90000);
+      document.getElementById("application-ref-number").innerText = refCode;
+      
+      document.getElementById("step-num-2").classList.replace("bg-slate-200", "bg-emerald-600");
+      document.getElementById("step-num-2").classList.replace("text-slate-700", "text-white");
+      document.getElementById("step-lbl-2").classList.replace("text-slate-600", "text-emerald-700");
+
+      document.getElementById("step-num-3").classList.replace("bg-slate-200", "bg-blue-900");
+      document.getElementById("step-num-3").classList.replace("text-slate-500", "text-white");
+      document.getElementById("step-lbl-3").classList.replace("text-slate-400", "text-blue-900");
+
+      document.getElementById("application-success-card").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    // 13. MASTER RENDER & FILTERS
+    function renderAll() {
+      renderSchemes();
+      renderVault();
+    }
+
+    function applyFilters() {
+      searchQuery = document.getElementById("scheme-search").value;
+      renderSchemes();
+    }
+
+    function setCategoryFilter(cat) {
+      selectedCategory = cat;
+      document.querySelectorAll(".cat-pill").forEach(pill => {
+        if (pill.getAttribute("data-cat") === cat) {
+          pill.className = "cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white";
+        } else {
+          pill.className = "cat-pill px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200";
+        }
+      });
+      renderSchemes();
+    }
+
+    // Initialize on load
+    window.addEventListener("DOMContentLoaded", () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

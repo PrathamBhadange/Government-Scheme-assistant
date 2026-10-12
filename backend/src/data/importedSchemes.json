@@ -1,0 +1,113 @@
+[
+  {
+    "schemeId": "PM_KISAN",
+    "name": "PM-KISAN (Pradhan Mantri Kisan Samman Nidhi)",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Agriculture",
+    "category": "AGRICULTURE",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "requiredOccupation": ["Farmer"],
+      "landOwnershipRequired": true
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "LAND_RECORD", "OTHER"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://pmkisan.gov.in"
+  },
+  {
+    "schemeId": "PMSBY",
+    "name": "Pradhan Mantri Suraksha Bima Yojana",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Insurance",
+    "category": "INSURANCE",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "maxAge": 70
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "OTHER"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://jansuraksha.gov.in"
+  },
+  {
+    "schemeId": "PM_JAY",
+    "name": "Ayushman Bharat PM-JAY",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Healthcare",
+    "category": "HEALTHCARE",
+    "eligibilityCriteria": {
+      "maxAnnualIncome": 250000
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "OTHER", "INCOME_PROOF"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://pmjay.gov.in"
+  },
+  {
+    "schemeId": "PMMY",
+    "name": "Pradhan Mantri Mudra Yojana",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Finance",
+    "category": "FINANCE",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "maxAge": 65,
+      "requiredOccupation": ["Self-Employed", "Business Owner", "Artisan"]
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "OTHER", "OTHER"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://financialservices.gov.in"
+  },
+  {
+    "schemeId": "POST_MATRIC_SCHOLARSHIP",
+    "name": "Post-Matric Scholarship Scheme",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Education",
+    "category": "EDUCATION",
+    "eligibilityCriteria": {
+      "minAge": 15,
+      "maxAge": 30,
+      "maxAnnualIncome": 250000,
+      "requiredOccupation": ["Student"]
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "INCOME_PROOF", "OTHER", "OTHER"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://scholarships.gov.in"
+  },
+  {
+    "schemeId": "APY",
+    "name": "Atal Pension Yojana",
+    "description": "Imported illustrative scheme record from supplied project data. Verify all details with an official source before real use.",
+    "ministry": "Imported Ministry Information",
+    "department": "Pension",
+    "category": "PENSION",
+    "eligibilityCriteria": {
+      "minAge": 18,
+      "maxAge": 40
+    },
+    "benefits": ["Imported benefit description requires official verification."],
+    "requiredDocuments": ["IDENTITY_PROOF", "OTHER"],
+    "startDate": "2025-01-01",
+    "endDate": "2099-12-31",
+    "status": "ACTIVE",
+    "sourceUrl": "https://jansuraksha.gov.in"
+  }
+]

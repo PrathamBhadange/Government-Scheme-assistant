@@ -4,9 +4,19 @@ import { fileURLToPath } from 'node:url';
 import { Scheme, SchemeStatus } from '../models/Scheme.js';
 
 const dataPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data', 'schemes.json');
-const schemes = JSON.parse(fs.readFileSync(dataPath, 'utf8')).map((data) => new Scheme(data));
+const importedDataPath = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'data', 'importedSchemes.json');
+const schemes = [
+  ...JSON.parse(fs.readFileSync(dataPath, 'utf8')),
+  ...JSON.parse(fs.readFileSync(importedDataPath, 'utf8'))
+].map((data) => new Scheme(data));
 
 const normalize = (value) => String(value ?? '').trim().toLowerCase();
+const normalizeCitizen = (citizen = {}) => ({
+  ...citizen,
+  annualIncome: citizen.annualIncome ?? citizen.annual_income,
+  ownsLand: citizen.ownsLand ?? citizen.owns_land,
+  documents: citizen.documents ?? citizen.available_documents ?? citizen.documents_uploaded
+});
 
 export function validateSchemeData(data) {
   return Scheme.validate(data);
@@ -26,13 +36,13 @@ export function getSchemeById(schemeId) {
 }
 
 export function checkEligibility(Citizen = {}) {
-  return schemes.map((scheme) => scheme.checkEligibility(Citizen));
+  return schemes.map((scheme) => scheme.checkEligibility(normalizeCitizen(Citizen)));
 }
 
 export function checkSchemeEligibility(schemeId, Citizen = {}) {
   const scheme = getSchemeById(schemeId);
   if (!scheme) return null;
-  return scheme.checkEligibility(Citizen);
+  return scheme.checkEligibility(normalizeCitizen(Citizen));
 }
 
 export function getRequiredDocuments(schemeId) {
