@@ -61,7 +61,7 @@
   <!-- Main Top Navbar -->
   <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-      
+
       <!-- Brand & DPI Indicator -->
       <div class="flex items-center gap-3">
         <div class="h-10 w-10 rounded-xl bg-blue-900 text-amber-400 flex items-center justify-center font-bold shadow-sm">
@@ -119,7 +119,7 @@
   <!-- 2. AUTHENTICATION & e-KYC VIEW -->
   <section id="auth-view" class="flex-1 flex items-center justify-center p-4 sm:p-6">
     <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden">
-      
+
       <!-- Civic Banner -->
       <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white p-6 text-center">
         <div class="inline-flex p-3 rounded-xl bg-white/10 backdrop-blur-sm mb-3">
@@ -204,7 +204,7 @@
 
   <!-- 3. MAIN CIVIC DASHBOARD (3-Tab Architecture) -->
   <main id="dashboard-view" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
-    
+
     <!-- Top 3 Tabs Navigation -->
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between border-b border-slate-200 pb-3 gap-3">
       <nav class="flex space-x-2 bg-slate-200/80 p-1 rounded-xl">
@@ -234,7 +234,7 @@
     <!-- TAB 1: SCHEME DISCOVERY & ELIGIBILITY -->
     <!-- ========================================== -->
     <section id="tab-content-1" class="mt-6 space-y-6">
-      
+
       <!-- Summary Metric Cards -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs">
@@ -271,11 +271,11 @@
       <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
         <div class="relative flex-1">
           <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-          <input 
-            type="text" 
-            id="scheme-search" 
-            oninput="applyFilters()" 
-            placeholder="Search welfare scheme, ministry, or keywords..." 
+          <input
+            type="text"
+            id="scheme-search"
+            oninput="applyFilters()"
+            placeholder="Search welfare scheme, ministry, or keywords..."
             class="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800 text-slate-800"
           />
         </div>
@@ -299,7 +299,7 @@
     <!-- TAB 2: DIGITAL LOCKER & DOCUMENT READINESS -->
     <!-- ========================================== -->
     <section id="tab-content-2" class="hidden mt-6 space-y-6">
-      
+
       <!-- DigiLocker Sync Hero Banner -->
       <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div class="space-y-1">
@@ -314,7 +314,7 @@
             This prototype stores only local document labels. It does not connect to DigiLocker or verify documents.
           </p>
         </div>
-        
+
         <button id="btn-sync-all-digilocker" onclick="syncDigiLockerAll()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl transition-all shadow-md flex items-center gap-2 shrink-0">
           <i data-lucide="refresh-cw" class="w-4 h-4" id="icon-sync-spinner"></i>
           <span id="txt-sync-btn">Update local profile</span>
@@ -332,7 +332,7 @@
     <!-- TAB 3: APPLICATION & TRACKING AGENT -->
     <!-- ========================================== -->
     <section id="tab-content-3" class="hidden mt-6 space-y-6">
-      
+
       <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm max-w-3xl mx-auto space-y-6">
         <div>
           <div class="flex items-center gap-2">
@@ -724,7 +724,7 @@
       document.getElementById("nav-profile-section").classList.remove("hidden");
 
       document.getElementById("nav-user-name").innerText = citizen.name;
-      document.getElementById("pill-user-summary").innerText = 
+      document.getElementById("pill-user-summary").innerText =
         `${citizen.name} (${citizen.age}, ${citizen.occupation}, ₹${citizen.income.toLocaleString('en-IN')})`;
 
       populateApplyDropdown();
@@ -1182,7 +1182,7 @@
       const scheme = document.getElementById("apply-scheme-select").value;
       const refCode = "MH-2026-SRT-" + Math.floor(10000 + Math.random() * 90000);
       document.getElementById("application-ref-number").innerText = refCode;
-      
+
       document.getElementById("step-num-2").classList.replace("bg-slate-200", "bg-emerald-600");
       document.getElementById("step-num-2").classList.replace("text-slate-700", "text-white");
       document.getElementById("step-lbl-2").classList.replace("text-slate-600", "text-emerald-700");
